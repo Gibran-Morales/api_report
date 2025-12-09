@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_router/shelf_router.dart';
@@ -32,8 +33,10 @@ void main() async {
       .addMiddleware(shelf.logRequests())
       .addMiddleware(_corsMiddleware)
       .addHandler(router);
+    
+  final port = int.parse(Platform.environment['PORT'] ?? '8081');
 
-  final server = await io.serve(handler, 'localhost', 8081);
+  final server = await io.serve(handler, InternetAddress.anyIPv4, port);
   print('Servidor escuchando en http://${server.address.host}:${server.port}');
 }
 
