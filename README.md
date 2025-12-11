@@ -13,22 +13,44 @@ Además, está configurado para funcionar en Railway, incluyendo manejo de CORS 
 
   Endpoints disponibles
 
-#**Obtener todas las actividades**
+**Obtener todas las actividades**
 **GET** `/reports`
 
-#**Crear nueva actividad**
+**Crear nueva actividad**
 **POST** `/reports`
 
-#**Actualizar actividad**
+**Actualizar actividad**
 **PUT** /reports/{id}
 
-#**Eliminar actividad**
+**Eliminar actividad**
 **DELETE** /reports/{id}
 
 
 Cómo ejecutar el proyecto localmente
 1. Clonar este repositorio:
    git clone (https://github.com/Gibran-Morales/api_report)
+2. Entrar al proyecto
+   cd api_report
+3. Instalar dependencias
+   dart pub get
+4. Ejecutar la API
+   dart run bin/server.dart
+La API correrá en:
+  http://localhost:8080
+
+Producción (Railway)
+  https://apireport-production.up.railway.app
+
+Descripción del proyecto.
+  UniTrack es una app diseñada para que estudiantes puedan gestionar sus actividades escolares.
+La API permite almacenar sus actividades con los siguientes campos:
+  Materia
+  Título
+  Descripción
+  Fecha de entrega
+  Estado (pendiente / completado)
+  El backend está diseñado para ser simple, ligero y fácil de integrar con Flutter.
+
 
 Body JSON:
 ```json
