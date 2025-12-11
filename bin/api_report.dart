@@ -35,7 +35,9 @@ void main() async {
       .addMiddleware(_corsMiddleware)
       .addHandler(router);
 
-  final server = await io.serve(handler, '0.0.0.0', 8081);
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+  final server = await io.serve(handler, InternetAddress.anyIPv4, port);
   print('Servidor escuchando en http://${server.address.host}:${server.port}');
 }
 
