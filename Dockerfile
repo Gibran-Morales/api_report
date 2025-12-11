@@ -1,26 +1,29 @@
-# Imagen base oficial de Dart
-FROM dart:stable
+# Usa imagen oficial de Dart
+FROM dart:stable AS build
 
-# Crea carpeta dentro del contenedor
 WORKDIR /app
 
-# Copia pubspec primero para optimizar build
+# Copia archivos
 COPY pubspec.* ./
-
-# Descarga dependencias
 RUN dart pub get
 
-# Copia todo el proyecto
 COPY . .
 
-# Compila a kernel JIT (no AOT porque es server)
-RUN dart pub get
+RUN dart pub get --offline
 
-# Railway asignará PORT automáticamente
-ENV PORT=8080
+# Compila a ejecutable nativo
+RUN dart compile exe bin/api_report.dart -o /server
 
-# Expone el puerto
-EXPOSE 8080
+# Imagen final ligera
+FROM debian:stable-slim
 
-# Comando de ejecución
-CMD ["dart", "bin/api_report.dart"]
+WORKDIR /app
+
+COPY --from=build /server /app/server
+
+# Railway asigna el puerto en la variable PORT
+ENV PORT=8081
+
+EXPOSE 8081
+
+CMD ["/app/server"]

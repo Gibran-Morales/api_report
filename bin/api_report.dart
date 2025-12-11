@@ -10,7 +10,7 @@ final List<Map<String, dynamic>> reports = [
     'materia': 'Cálculo I',
     'titulo': 'Tarea',
     'descripcion': 'Ejercicios 1–10 pág. 52',
-    'fechaEntrega': '2025-12-10',
+    'fechaEntrega': '10-12-2025',
     'estado': 'pendiente',
   },
   {
@@ -18,7 +18,7 @@ final List<Map<String, dynamic>> reports = [
     'materia': 'Programación',
     'titulo': 'Examen',
     'descripcion': 'Parcial 2',
-    'fechaEntrega': '2025-12-12',
+    'fechaEntrega': '12-12-2025',
     'estado': 'pendiente',
   },
 ];
@@ -27,18 +27,18 @@ void main() async {
   final router = Router()
     ..get('/reports', _getReportsHandler)
     ..post('/reports', _addReportsHandler)
+    ..put('/reports/<id>', _updateReportHandler)   
     ..delete('/reports/<id>', _deleteReportHandler);
 
   final handler = const shelf.Pipeline()
       .addMiddleware(shelf.logRequests())
       .addMiddleware(_corsMiddleware)
       .addHandler(router);
-    
-  final port = int.parse(Platform.environment['PORT'] ?? '8081');
 
-  final server = await io.serve(handler, InternetAddress.anyIPv4, port);
+  final server = await io.serve(handler, '0.0.0.0', 8081);
   print('Servidor escuchando en http://${server.address.host}:${server.port}');
 }
+
 
 shelf.Response _getReportsHandler(shelf.Request request) {
   return shelf.Response.ok(
@@ -96,7 +96,7 @@ shelf.Middleware get _corsMiddleware {
       const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Origin, Content-Type',
-        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       };
 
       if (request.method == 'OPTIONS'){
@@ -111,3 +111,38 @@ shelf.Middleware get _corsMiddleware {
     };
   };
 }
+
+  Future<shelf.Response> _updateReportHandler(
+  shelf.Request request,
+  String id,
+) async {
+  final body = await request.readAsString();
+  final data = jsonDecode(body) as Map<String, dynamic>;
+  final reportId = int.parse(id);
+
+  final index = reports.indexWhere((r) => r['id'] == reportId);
+  if (index == -1) {
+    return shelf.Response.notFound(
+      jsonEncode({'error': 'Reporte no encontrado'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
+
+  reports[index] = {
+    'id': reportId,
+    'materia': data['materia'],
+    'titulo': data['titulo'],
+    'descripcion': data['descripcion'],
+    'fechaEntrega': data['fechaEntrega'],
+    'estado': data['estado'] ?? reports[index]['estado'],
+  };
+
+  return shelf.Response.ok(
+    jsonEncode(reports[index]),
+    headers: {'Content-Type': 'application/json'},
+  );
+}
+
+
+
+
