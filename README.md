@@ -28,7 +28,7 @@ Además, está configurado para funcionar en Railway, incluyendo manejo de CORS 
 
 Cómo ejecutar el proyecto localmente
 1. Clonar este repositorio:
-   git clone https://github.com/TU-USUARIO/api_report.git
+   git clone (https://github.com/Gibran-Morales/api_report)
 
 Body JSON:
 ```json
